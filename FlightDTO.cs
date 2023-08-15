@@ -8,7 +8,7 @@ namespace AirportTicketBooking
 {
     public class FlightDTO
     {
-        public static int NextUniqueID { get; private set; } = 1;
+        private static int NextUniqueId { get; set; } = 1;
 
         public int ID { get; private set; }
 
@@ -64,9 +64,9 @@ namespace AirportTicketBooking
             ArrivalAirport = arrivalAirport;
             Class = @class;
 
-            ID = NextUniqueID;
+            ID = NextUniqueId;
             FlightsFile.Append(this);
-            NextUniqueID++;
+            NextUniqueId++;
         }
 
         public FlightDTO(int id, int airplaneCapacity, decimal price, string? departureCountry,
@@ -100,7 +100,7 @@ namespace AirportTicketBooking
                         attribute is RangeAttribute range && !range.IsValid(value) ||
                         attribute is StringLengthAttribute stringLength && !stringLength.IsValid(value))
                     {
-                        NextUniqueID--;
+                        NextUniqueId--;
                         return false;
                     }
                 }

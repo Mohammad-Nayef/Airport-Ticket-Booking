@@ -4,7 +4,7 @@ namespace AirportTicketBooking
 {
     public class BookingDTO
     {
-        public static int NextUniqueID { get; private set; } = 1;
+        private static int NextUniqueId { get; set; } = 1;
 
         public int ID { get; private set; }
 
@@ -25,12 +25,12 @@ namespace AirportTicketBooking
 
             if (BookingsFile.HasData)
             {
-                NextUniqueID = BookingsFile.GetAll().Last().ID + 1;
+                NextUniqueId = BookingsFile.GetAll().Last().ID + 1;
             }
 
-            ID = NextUniqueID;
+            ID = NextUniqueId;
             BookingsFile.Append(this);
-            NextUniqueID++;
+            NextUniqueId++;
         }
 
         public BookingDTO(int id, PassengerDTO passenger, FlightDTO flight, DateTime bookingDate)
