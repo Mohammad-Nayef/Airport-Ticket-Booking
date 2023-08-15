@@ -17,13 +17,13 @@ namespace AirportTicketBooking.CSVFiles
 
         public static void Append(BookingDTO newBooking)
         {
-            if (Exists(newBooking.ID))
+            if (Exists(newBooking.Id))
             {
                 throw new Exception("This booking already exists.");
             }
 
-            File.AppendAllText(BookingsFilePath, $"{newBooking.ID}, {newBooking.Passenger.ID}," +
-                                   $" {newBooking.Flight.ID}, {newBooking.BookingDate.Month}-" +
+            File.AppendAllText(BookingsFilePath, $"{newBooking.Id}, {newBooking.PassengerId}," +
+                                   $" {newBooking.FlightId}, {newBooking.BookingDate.Month}-" +
                                    $"{newBooking.BookingDate.Day}-{newBooking.BookingDate.Year}\n");
         }
 
@@ -48,12 +48,12 @@ namespace AirportTicketBooking.CSVFiles
             while (!_fileReader.EndOfStream)
             {
                 var bookingData = _fileReader.ReadLine()?.Split(", ");
-                int passengerID = int.Parse(bookingData[1]);
-                int flightID = int.Parse(bookingData[2]);
+                int passengerId = int.Parse(bookingData[1]);
+                int flightId = int.Parse(bookingData[2]);
 
                 // Bookings CSV file format: ID, Passenger ID, Flight ID, Booking date
                 bookingsList.Add(new BookingDTO(int.Parse(bookingData[0]), 
-                    PassengersFile.Get(passengerID), FlightsFile.Get(flightID),
+                    PassengersFile.Get(passengerId), FlightsFile.Get(flightId),
                     DateTime.Parse(bookingData[3])));
             }
 
@@ -61,22 +61,22 @@ namespace AirportTicketBooking.CSVFiles
             return bookingsList;
         }
 
-        public static List<BookingDTO> GetBookingsOf(int passengerID)
+        public static List<BookingDTO> GetBookingsOf(int passengerId)
         {
             if (!HasData)
                 throw new Exception("There are no bookings.");
-            return GetAll().Where(booking => booking.Passenger.ID == passengerID)
+            return GetAll().Where(booking => booking.PassengerId == passengerId)
                             .ToList();
         }
 
-        public static void Remove(int bookingID)
+        public static void Remove(int bookingId)
         {
-            if (!Exists(bookingID))
+            if (!Exists(bookingId))
             {
                 throw new Exception("This bookings doesn't exist.");
             }
 
-            var modifiedBookings = GetAll().Where(booking => booking.ID != bookingID).ToList();
+            var modifiedBookings = GetAll().Where(booking => booking.Id != bookingId).ToList();
             Overwrite(modifiedBookings);
         }
 
@@ -86,10 +86,10 @@ namespace AirportTicketBooking.CSVFiles
                 File.Delete(BookingsFilePath);
         }
 
-        public static bool Exists(int bookingID)
+        public static bool Exists(int bookingId)
         {
             if (HasData)
-                return GetAll().Any(booking => booking.ID == bookingID);
+                return GetAll().Any(booking => booking.Id == bookingId);
 
             return false;
         }

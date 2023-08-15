@@ -18,10 +18,10 @@ namespace AirportTicketBooking.CSVFiles
 
         public static void Append(FlightDTO newFlight)
         {
-            if (Exists(newFlight.ID))
+            if (Exists(newFlight.Id))
                 throw new Exception("This flight already exists.");
 
-            File.AppendAllText(FlightsFilePath, $"{newFlight.ID}, " +
+            File.AppendAllText(FlightsFilePath, $"{newFlight.Id}, " +
                 $"{newFlight.AirplaneCapacity}, {newFlight.Price}, " +
                 $"{newFlight.DepartureCountry}, {newFlight.DepartureDate.Month}-" +
                 $"{newFlight.DepartureDate.Day}-{newFlight.DepartureDate.Year}, " +
@@ -109,7 +109,7 @@ namespace AirportTicketBooking.CSVFiles
             if (!Exists(flightID))
                 throw new Exception($"The flight of ID: {flightID} doesn't exist.");
 
-            return GetAll().Single(flight => flight.ID == flightID);
+            return GetAll().Single(flight => flight.Id == flightID);
         }
 
         public static List<FlightDTO> GetAllAvailable()
@@ -122,7 +122,7 @@ namespace AirportTicketBooking.CSVFiles
                     if (BookingsFile.HasData)
                     {
                         var numberOfPassengers = BookingsFile.GetAll()
-                            .Where(booking => booking.Flight.ID == flight.ID)
+                            .Where(booking => booking.FlightId.ID == flight.Id)
                             .Count();
 
                         return numberOfPassengers < flight.AirplaneCapacity;
@@ -140,7 +140,7 @@ namespace AirportTicketBooking.CSVFiles
         public static bool Exists(int flightID)
         {
             if (HasData)
-                return GetAll().Any(flight => flight.ID == flightID);
+                return GetAll().Any(flight => flight.Id == flightID);
 
             return false;
         }

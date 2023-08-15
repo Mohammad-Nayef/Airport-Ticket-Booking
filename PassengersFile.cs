@@ -16,12 +16,12 @@ namespace AirportTicketBooking.CSVFiles
 
         public static void Append(PassengerDTO newPassenger)
         {
-            if (Exists(newPassenger.ID))
+            if (Exists(newPassenger.Id))
             {
                 throw new Exception("This passenger already exists.");
             }
 
-            File.AppendAllText(PassengersFilePath, $"{newPassenger.ID}, {newPassenger.Name}\n");
+            File.AppendAllText(PassengersFilePath, $"{newPassenger.Id}, {newPassenger.Name}\n");
         }
 
         public static List<PassengerDTO> GetAll()
@@ -42,14 +42,14 @@ namespace AirportTicketBooking.CSVFiles
             return passengersList;
         }
 
-        public static PassengerDTO Get(int passengerID)
+        public static PassengerDTO Get(int passengerId)
         {
-            if (!Exists(passengerID))
+            if (!Exists(passengerId))
             {
-                throw new Exception($"The passenger of ID: {passengerID} doesn't exist.");
+                throw new Exception($"The passenger of ID: {passengerId} doesn't exist.");
             }
 
-            return GetAll().Single(passenger => passenger.ID == passengerID);
+            return GetAll().Single(passenger => passenger.Id == passengerId);
         }
 
         public static void RemoveAll()
@@ -58,10 +58,10 @@ namespace AirportTicketBooking.CSVFiles
                 File.Delete(PassengersFilePath);
         }
 
-        public static bool Exists(int passengerID)
+        public static bool Exists(int passengerId)
         {
             if (HasData)
-                return GetAll().Any(passenger => passenger.ID == passengerID);
+                return GetAll().Any(passenger => passenger.Id == passengerId);
 
             return false;
         }

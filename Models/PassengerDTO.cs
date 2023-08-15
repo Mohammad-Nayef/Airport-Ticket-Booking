@@ -6,7 +6,7 @@ namespace AirportTicketBooking.Models
     {
         private static int NextUniqueId { get; set; } = 1;
 
-        public int ID { get; private set; }
+        public int Id { get; private set; }
 
         public string Name { get; set; }
 
@@ -18,20 +18,20 @@ namespace AirportTicketBooking.Models
             Name = name;
             if (PassengersFile.HasData)
             {
-                NextUniqueId = PassengersFile.GetAll().Last().ID + 1;
+                NextUniqueId = PassengersFile.GetAll().Last().Id + 1;
             }
 
-            ID = NextUniqueId;
+            Id = NextUniqueId;
             PassengersFile.Append(this);
             NextUniqueId++;
         }
 
         public PassengerDTO(int id, string name)
         {
-            ID = id;
+            Id = id;
             Name = name;
         }
 
-        public override string ToString() => $"Passenger -> ID: {ID}, Name: {Name}";
+        public override string ToString() => $"Passenger -> ID: {Id}, Name: {Name}";
     }
 }

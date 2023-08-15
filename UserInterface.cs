@@ -4,7 +4,7 @@ using AirportTicketBooking.Models;
 
 namespace AirportTicketBooking
 {
-    public class UI
+    public class UserInterface
     {
         private static char? _option;
         private static PassengerDTO passenger;
@@ -91,7 +91,7 @@ namespace AirportTicketBooking
                     case '3':
                         try
                         {
-                            passengerBookings = BookingsFile.GetBookingsOf(passenger.ID);
+                            passengerBookings = BookingsFile.GetBookingsOf(passenger.Id);
 
                             if (passengerBookings.Count == 0)
                                 throw new Exception("You have no bookings");
@@ -128,7 +128,7 @@ namespace AirportTicketBooking
             {
                 try
                 {
-                    passengerBookings = BookingsFile.GetBookingsOf(passenger.ID);
+                    passengerBookings = BookingsFile.GetBookingsOf(passenger.Id);
 
                     if (passengerBookings.Count == 0)
                         throw new Exception("You have no bookings.");
@@ -146,7 +146,7 @@ namespace AirportTicketBooking
                 Console.Write("\nChoose an option or an ID of a booking to modify it: ");
 
                 if (!int.TryParse(Console.ReadLine(), out var optionOrID) ||
-                    !BookingsFile.GetBookingsOf(passenger.ID).Any(flight => flight.ID == optionOrID))
+                    !BookingsFile.GetBookingsOf(passenger.Id).Any(flight => flight.Id == optionOrID))
                 {
                     if (optionOrID == 0)
                         return;
@@ -171,7 +171,7 @@ namespace AirportTicketBooking
             {
                 try
                 {
-                    passengerBookings = BookingsFile.GetBookingsOf(passenger.ID);
+                    passengerBookings = BookingsFile.GetBookingsOf(passenger.Id);
 
                     if (passengerBookings.Count == 0)
                         throw new Exception("You have no bookings.");
@@ -189,7 +189,7 @@ namespace AirportTicketBooking
                 Console.Write("\nChoose an option or an ID of a booking to cancel it: ");
 
                 if (!int.TryParse(Console.ReadLine(), out var optionOrID) ||
-                    !BookingsFile.GetBookingsOf(passenger.ID).Any(flight => flight.ID == optionOrID))
+                    !BookingsFile.GetBookingsOf(passenger.Id).Any(flight => flight.Id == optionOrID))
                 {
                     if (optionOrID == 0)
                         return;
@@ -322,43 +322,43 @@ namespace AirportTicketBooking
 
                         if (chosen.ContainsKey(1))
                             filteredBookings = filteredBookings
-                                .Where(booking => booking.Flight.Price == price)
+                                .Where(booking => booking.FlightId.Price == price)
                                 .ToList();
                         if (chosen.ContainsKey(2))
                             filteredBookings = filteredBookings
-                                .Where(booking => booking.Flight.DepartureCountry
+                                .Where(booking => booking.FlightId.DepartureCountry
                                 .Equals(departureCountry, StringComparison.InvariantCultureIgnoreCase))
                                 .ToList();
                         if (chosen.ContainsKey(3))
                             filteredBookings = filteredBookings
-                                .Where(booking => booking.Flight.DestinationCountry
+                                .Where(booking => booking.FlightId.DestinationCountry
                                 .Equals(destinationCountry, StringComparison.InvariantCultureIgnoreCase))
                                 .ToList();
                         if (chosen.ContainsKey(4))
                             filteredBookings = filteredBookings
-                                .Where(booking => booking.Flight.DepartureDate == departureDate)
+                                .Where(booking => booking.FlightId.DepartureDate == departureDate)
                                 .ToList();
                         if (chosen.ContainsKey(5))
                             filteredBookings = filteredBookings
-                                .Where(booking => booking.Flight.DepartureAirport
+                                .Where(booking => booking.FlightId.DepartureAirport
                                 .Equals(departureAirport, StringComparison.InvariantCultureIgnoreCase))
                                 .ToList();
                         if (chosen.ContainsKey(6))
                             filteredBookings = filteredBookings
-                                .Where(booking => booking.Flight.ArrivalAirport
+                                .Where(booking => booking.FlightId.ArrivalAirport
                                 .Equals(arrivalAirport, StringComparison.InvariantCultureIgnoreCase))
                                 .ToList();
                         if (chosen.ContainsKey(7))
                             filteredBookings = filteredBookings
-                                .Where(booking => booking.Flight.Class == flightClass)
+                                .Where(booking => booking.FlightId.Class == flightClass)
                                 .ToList();
                         if (chosen.ContainsKey(8))
                             filteredBookings = filteredBookings
-                                .Where(booking => booking.Flight.ID == flightID)
+                                .Where(booking => booking.FlightId.ID == flightID)
                                 .ToList();
                         if (chosen.ContainsKey(9))
                             filteredBookings = filteredBookings
-                                .Where(booking => booking.Passenger.ID == passengerID)
+                                .Where(booking => booking.PassengerId.ID == passengerID)
                                 .ToList();
 
                         filteredBookings.ForEach(booking => Console.WriteLine(booking + "\n"));
@@ -372,7 +372,7 @@ namespace AirportTicketBooking
                             break;
 
                         if (!decimal.TryParse(input, out price) ||
-                            !bookings.Any(booking => booking.Flight.Price == price))
+                            !bookings.Any(booking => booking.FlightId.Price == price))
                         {
                             Console.WriteLine("Enter a valid and available price.");
                         }
@@ -388,7 +388,7 @@ namespace AirportTicketBooking
                             break;
 
                         if (!bookings.Any(booking =>
-                            booking.Flight.DepartureCountry
+                            booking.FlightId.DepartureCountry
                             .Equals(input, StringComparison.InvariantCultureIgnoreCase)))
                         {
                             Console.WriteLine("Enter a valid and available country name.");
@@ -406,7 +406,7 @@ namespace AirportTicketBooking
                             break;
 
                         if (!bookings.Any(booking =>
-                            booking.Flight.DestinationCountry
+                            booking.FlightId.DestinationCountry
                             .Equals(input, StringComparison.InvariantCultureIgnoreCase)))
                         {
                             Console.WriteLine("Enter a valid and available country name.");
@@ -424,7 +424,7 @@ namespace AirportTicketBooking
                             break;
 
                         if (!DateTime.TryParse(input, out departureDate) ||
-                            !bookings.Any(booking => booking.Flight.DepartureDate == departureDate))
+                            !bookings.Any(booking => booking.FlightId.DepartureDate == departureDate))
                         {
                             Console.WriteLine("Enter a valid and available departure date.");
                         }
@@ -441,7 +441,7 @@ namespace AirportTicketBooking
                             break;
 
                         if (!bookings.Any(booking =>
-                            booking.Flight.DepartureAirport
+                            booking.FlightId.DepartureAirport
                             .Equals(input, StringComparison.InvariantCultureIgnoreCase)))
                         {
                             Console.WriteLine("Enter a valid and available departure airport name.");
@@ -459,7 +459,7 @@ namespace AirportTicketBooking
                             break;
 
                         if (!bookings.Any(booking =>
-                            booking.Flight.ArrivalAirport
+                            booking.FlightId.ArrivalAirport
                             .Equals(input, StringComparison.InvariantCultureIgnoreCase)))
                         {
                             Console.WriteLine("Enter a valid and available arrival airport name.");
@@ -477,7 +477,7 @@ namespace AirportTicketBooking
                             break;
 
                         if (!Enum.TryParse(input, out flightClass) ||
-                            !bookings.Any(booking => booking.Flight.Class == flightClass))
+                            !bookings.Any(booking => booking.FlightId.Class == flightClass))
                         {
                             Console.WriteLine("Enter a valid and available flight class.");
                         }
@@ -520,8 +520,8 @@ namespace AirportTicketBooking
         {
             var passengers = PassengersFile.GetAll();
             var passengersWithBookings = bookings.Join(passengers,
-                    booking => booking.Passenger.ID,
-                    passenger => passenger.ID,
+                    booking => booking.PassengerId.ID,
+                    passenger => passenger.Id,
                     (booking, passenger) => passenger)
                     .Distinct()
                     .ToList();
@@ -561,8 +561,8 @@ namespace AirportTicketBooking
         {
             var flights = FlightsFile.GetAll();
             var bookedFlights = bookings.Join(flights,
-                                booking => booking.Flight.ID,
-                                flight => flight.ID,
+                                booking => booking.FlightId.ID,
+                                flight => flight.Id,
                                 (booking, flight) => flight)
                                 .Distinct()
                                 .ToList();
@@ -643,7 +643,7 @@ namespace AirportTicketBooking
             Console.Write("Enter an option or the ID of a flight to book it: ");
 
             if (!int.TryParse(Console.ReadLine(), out var ID) ||
-                !availableFlights.Any(flight => flight.ID == ID))
+                !availableFlights.Any(flight => flight.Id == ID))
             {
                 if (ID == 0)
                     return;
@@ -651,7 +651,7 @@ namespace AirportTicketBooking
             }
             else
             {
-                var neededFlight = availableFlights.Single(flight => flight.ID == ID);
+                var neededFlight = availableFlights.Single(flight => flight.Id == ID);
                 var _ = new BookingDTO(passenger, neededFlight);
 
                 Console.WriteLine($"The flight with ID ({ID}) is booked successfully!");

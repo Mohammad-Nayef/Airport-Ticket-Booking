@@ -6,11 +6,11 @@ namespace AirportTicketBooking.Models
     {
         private static int NextUniqueId { get; set; } = 1;
 
-        public int ID { get; private set; }
+        public int Id { get; private set; }
 
-        public PassengerDTO Passenger { get; private set; }
+        public int PassengerId { get; private set; }
 
-        public FlightDTO Flight { get; private set; }
+        public int FlightId { get; private set; }
 
         public DateTime BookingDate { get; set; }
 
@@ -19,29 +19,29 @@ namespace AirportTicketBooking.Models
         /// </summary>
         public BookingDTO(PassengerDTO passenger, FlightDTO flight)
         {
-            Passenger = passenger;
-            Flight = flight;
+            PassengerId = passenger.Id;
+            FlightId = flight.Id;
             BookingDate = DateTime.Now.Date;
 
             if (BookingsFile.HasData)
             {
-                NextUniqueId = BookingsFile.GetAll().Last().ID + 1;
+                NextUniqueId = BookingsFile.GetAll().Last().Id + 1;
             }
 
-            ID = NextUniqueId;
+            Id = NextUniqueId;
             BookingsFile.Append(this);
             NextUniqueId++;
         }
 
         public BookingDTO(int id, PassengerDTO passenger, FlightDTO flight, DateTime bookingDate)
         {
-            ID = id;
-            Passenger = passenger;
-            Flight = flight;
+            Id = id;
+            PassengerId = passenger.Id;
+            FlightId = flight.Id;
             BookingDate = bookingDate;
         }
 
-        public override string ToString() => $"Booking -> ID: {ID}, Date: {BookingDate.Month}-" +
-                $"{BookingDate.Day}-{BookingDate.Year}, Passenger and flight:\n{Passenger}\n{Flight}";
+        public override string ToString() => $"Booking -> ID: {Id}, Date: {BookingDate.Month}-" +
+                $"{BookingDate.Day}-{BookingDate.Year}, Passenger and flight:\n{PassengerId}\n{FlightId}";
     }
 }

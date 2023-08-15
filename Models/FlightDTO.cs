@@ -10,7 +10,7 @@ namespace AirportTicketBooking.Models
     {
         private static int NextUniqueId { get; set; } = 1;
 
-        public int ID { get; private set; }
+        public int Id { get; private set; }
 
         [Required]
         [Range(1, 100_000)]
@@ -64,7 +64,7 @@ namespace AirportTicketBooking.Models
             ArrivalAirport = arrivalAirport;
             Class = @class;
 
-            ID = NextUniqueId;
+            Id = NextUniqueId;
             FlightsFile.Append(this);
             NextUniqueId++;
         }
@@ -73,7 +73,7 @@ namespace AirportTicketBooking.Models
                       DateTime departureDate, string? departureAirport,
                       string? destinationCountry, string? arrivalAirport, FlightClass @class)
         {
-            ID = id;
+            Id = id;
             AirplaneCapacity = airplaneCapacity;
             Price = price;
             DepartureCountry = departureCountry;
@@ -183,7 +183,7 @@ namespace AirportTicketBooking.Models
             return constraints.ToString();
         }
 
-        public override string ToString() => $"Flight -> ID: {ID}, Airplane capacity: " +
+        public override string ToString() => $"Flight -> ID: {Id}, Airplane capacity: " +
             $"{AirplaneCapacity}, Price: {Price}, Departure country: {DepartureCountry}, " +
             $"\nDeparture date: {DepartureDate.Month}-{DepartureDate.Day}-{DepartureDate.Year}, " +
             $"Departure airport: {DepartureAirport}, Destination country: {DestinationCountry}, " +
