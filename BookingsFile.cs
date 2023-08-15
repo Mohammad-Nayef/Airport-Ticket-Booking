@@ -1,4 +1,6 @@
-﻿namespace AirportTicketBooking.CSVFiles
+﻿using AirportTicketBooking.Models;
+
+namespace AirportTicketBooking.CSVFiles
 {
     public static class BookingsFile
     {

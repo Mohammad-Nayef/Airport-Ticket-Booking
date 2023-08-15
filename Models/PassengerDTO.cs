@@ -1,6 +1,6 @@
 ﻿using AirportTicketBooking.CSVFiles;
 
-namespace AirportTicketBooking
+namespace AirportTicketBooking.Models
 {
     public class PassengerDTO
     {

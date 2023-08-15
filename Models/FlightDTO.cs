@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Text;
 using AirportTicketBooking.CSVFiles;
 
-namespace AirportTicketBooking
+namespace AirportTicketBooking.Models
 {
     public class FlightDTO
     {

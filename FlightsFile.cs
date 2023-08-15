@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using AirportTicketBooking.Models;
 
 namespace AirportTicketBooking.CSVFiles
 {
