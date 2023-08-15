@@ -70,7 +70,7 @@ namespace AirportTicketBooking
                     case '1':
                         try
                         {
-                            availableFlights = FlightsFile.GetAllAvailable();
+                            availableFlights = FlightService.GetAllAvailable();
 
                             if (availableFlights.Count == 0)
                                 throw new Exception("There are no available flights.");
@@ -91,7 +91,7 @@ namespace AirportTicketBooking
                     case '3':
                         try
                         {
-                            passengerBookings = BookingsFile.GetBookingsOf(passenger.Id);
+                            passengerBookings = BookingService.GetBookingsOf(passenger.Id);
 
                             if (passengerBookings.Count == 0)
                                 throw new Exception("You have no bookings");
@@ -128,7 +128,7 @@ namespace AirportTicketBooking
             {
                 try
                 {
-                    passengerBookings = BookingsFile.GetBookingsOf(passenger.Id);
+                    passengerBookings = BookingService.GetBookingsOf(passenger.Id);
 
                     if (passengerBookings.Count == 0)
                         throw new Exception("You have no bookings.");
@@ -146,7 +146,7 @@ namespace AirportTicketBooking
                 Console.Write("\nChoose an option or an ID of a booking to modify it: ");
 
                 if (!int.TryParse(Console.ReadLine(), out var optionOrID) ||
-                    !BookingsFile.GetBookingsOf(passenger.Id).Any(flight => flight.Id == optionOrID))
+                    !BookingService.GetBookingsOf(passenger.Id).Any(flight => flight.Id == optionOrID))
                 {
                     if (optionOrID == 0)
                         return;
@@ -154,9 +154,9 @@ namespace AirportTicketBooking
                 }
                 else
                 {
-                    availableFlights = FlightsFile.GetAllAvailable();
+                    availableFlights = FlightService.GetAllAvailable();
                     BookingAvailableFlightMenu();
-                    BookingsFile.Remove(optionOrID);
+                    BookingService.Remove(optionOrID);
                     Console.WriteLine($"The booking with ID ({optionOrID}) is modified successfully!");
                 }
 
@@ -171,7 +171,7 @@ namespace AirportTicketBooking
             {
                 try
                 {
-                    passengerBookings = BookingsFile.GetBookingsOf(passenger.Id);
+                    passengerBookings = BookingService.GetBookingsOf(passenger.Id);
 
                     if (passengerBookings.Count == 0)
                         throw new Exception("You have no bookings.");
@@ -189,7 +189,7 @@ namespace AirportTicketBooking
                 Console.Write("\nChoose an option or an ID of a booking to cancel it: ");
 
                 if (!int.TryParse(Console.ReadLine(), out var optionOrID) ||
-                    !BookingsFile.GetBookingsOf(passenger.Id).Any(flight => flight.Id == optionOrID))
+                    !BookingService.GetBookingsOf(passenger.Id).Any(flight => flight.Id == optionOrID))
                 {
                     if (optionOrID == 0)
                         return;
@@ -197,7 +197,7 @@ namespace AirportTicketBooking
                 }
                 else
                 {
-                    BookingsFile.Remove(optionOrID);
+                    BookingService.Remove(optionOrID);
                     Console.WriteLine($"The booking with ID ({optionOrID}) is canceled successfully!");
                 }
 
@@ -238,7 +238,7 @@ namespace AirportTicketBooking
 
                         try
                         {
-                            FlightsFile.ImportCSVFile(filePath);
+                            FlightService.ImportCSVFile(filePath);
                         }
                         catch (Exception ex)
                         {
@@ -250,9 +250,9 @@ namespace AirportTicketBooking
                         break;
 
                     case '4':
-                        FlightsFile.RemoveAll();
-                        BookingsFile.RemoveAll();
-                        PassengersFile.RemoveAll();
+                        FlightService.RemoveAll();
+                        BookingService.RemoveAll();
+                        PassengerService.RemoveAll();
                         Console.WriteLine("Data deleted successfully!");
                         break;
 
@@ -283,7 +283,7 @@ namespace AirportTicketBooking
 
             try
             {
-                bookings = BookingsFile.GetAll().ToList();
+                bookings = BookingService.GetAll().ToList();
             }
             catch (Exception ex)
             {
@@ -518,7 +518,7 @@ namespace AirportTicketBooking
         public static void FilterByPassengerMenu(ref List<BookingDTO>? bookings,
             ref StringBuilder menu, ref Dictionary<short, bool> chosen, ref int passengerID)
         {
-            var passengers = PassengersFile.GetAll();
+            var passengers = PassengerService.GetAll();
             var passengersWithBookings = bookings.Join(passengers,
                     booking => booking.PassengerId.ID,
                     passenger => passenger.Id,
@@ -559,7 +559,7 @@ namespace AirportTicketBooking
         public static void FilterByFlightMenu(ref List<BookingDTO>? bookings,
             ref StringBuilder menu, ref Dictionary<short, bool> chosen, ref int flightID)
         {
-            var flights = FlightsFile.GetAll();
+            var flights = FlightService.GetAll();
             var bookedFlights = bookings.Join(flights,
                                 booking => booking.FlightId.ID,
                                 flight => flight.Id,
@@ -601,7 +601,7 @@ namespace AirportTicketBooking
         {
             while (true)
             {
-                availableFlights = FlightsFile.GetAllAvailable();
+                availableFlights = FlightService.GetAllAvailable();
 
                 Console.Clear();
                 Console.WriteLine("All of the available flights:");

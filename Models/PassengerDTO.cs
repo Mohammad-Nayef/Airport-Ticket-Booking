@@ -16,13 +16,13 @@ namespace AirportTicketBooking.Models
         public PassengerDTO(string name)
         {
             Name = name;
-            if (PassengersFile.HasData)
+            if (PassengerService.HasData)
             {
-                NextUniqueId = PassengersFile.GetAll().Last().Id + 1;
+                NextUniqueId = PassengerService.GetAll().Last().Id + 1;
             }
 
             Id = NextUniqueId;
-            PassengersFile.Append(this);
+            PassengerService.Append(this);
             NextUniqueId++;
         }
 

@@ -2,7 +2,7 @@
 
 namespace AirportTicketBooking.CSVFiles
 {
-    public static class BookingsFile
+    public static class BookingService
     {
         private const string BookingsFilePath = "Bookings.csv";
 
@@ -53,7 +53,7 @@ namespace AirportTicketBooking.CSVFiles
 
                 // Bookings CSV file format: ID, Passenger ID, Flight ID, Booking date
                 bookingsList.Add(new BookingDTO(int.Parse(bookingData[0]), 
-                    PassengersFile.Get(passengerId), FlightsFile.Get(flightId),
+                    PassengerService.Get(passengerId), FlightService.Get(flightId),
                     DateTime.Parse(bookingData[3])));
             }
 

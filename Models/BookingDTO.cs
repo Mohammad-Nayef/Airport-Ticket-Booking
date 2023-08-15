@@ -23,13 +23,13 @@ namespace AirportTicketBooking.Models
             FlightId = flight.Id;
             BookingDate = DateTime.Now.Date;
 
-            if (BookingsFile.HasData)
+            if (BookingService.HasData)
             {
-                NextUniqueId = BookingsFile.GetAll().Last().Id + 1;
+                NextUniqueId = BookingService.GetAll().Last().Id + 1;
             }
 
             Id = NextUniqueId;
-            BookingsFile.Append(this);
+            BookingService.Append(this);
             NextUniqueId++;
         }
 

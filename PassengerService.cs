@@ -2,7 +2,7 @@
 
 namespace AirportTicketBooking.CSVFiles
 {
-    public static class PassengersFile
+    public static class PassengerService
     {
         private const string PassengersFilePath = "Passengers.csv";
 

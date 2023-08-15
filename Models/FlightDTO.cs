@@ -65,7 +65,7 @@ namespace AirportTicketBooking.Models
             Class = @class;
 
             Id = NextUniqueId;
-            FlightsFile.Append(this);
+            FlightService.Append(this);
             NextUniqueId++;
         }
 

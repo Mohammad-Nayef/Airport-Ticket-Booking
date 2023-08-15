@@ -3,7 +3,7 @@ using AirportTicketBooking.Models;
 
 namespace AirportTicketBooking.CSVFiles
 {
-    public static class FlightsFile
+    public static class FlightService
     {
         private const string FlightsFilePath = "Flights.csv";
 
@@ -119,9 +119,9 @@ namespace AirportTicketBooking.CSVFiles
 
             return GetAll().Where(flight =>
                 {
-                    if (BookingsFile.HasData)
+                    if (BookingService.HasData)
                     {
-                        var numberOfPassengers = BookingsFile.GetAll()
+                        var numberOfPassengers = BookingService.GetAll()
                             .Where(booking => booking.FlightId.ID == flight.Id)
                             .Count();
 
