@@ -15,7 +15,7 @@ namespace AirportTicketBooking.CSVFiles
             }
         }
 
-        public static void Append(Flight newFlight)
+        public static void Append(FlightDTO newFlight)
         {
             if (Exists(newFlight.ID))
                 throw new Exception("This flight already exists.");
@@ -60,7 +60,7 @@ namespace AirportTicketBooking.CSVFiles
                     !decimal.TryParse(newFlight[1], out var price) ||
                     !DateTime.TryParse(newFlight[3], out DateTime departureDate) ||
                     !Enum.TryParse(typeof(FlightClass), newFlight[7], out var flightClass) ||
-                    !Flight.IsValid(new Flight(airplaneCapacity, price, newFlight[2],
+                    !FlightDTO.IsValid(new FlightDTO(airplaneCapacity, price, newFlight[2],
                     departureDate, newFlight[4], newFlight[5], newFlight[6],
                     (FlightClass)flightClass)))
                 {
@@ -80,9 +80,9 @@ namespace AirportTicketBooking.CSVFiles
             return true;
         }
 
-        public static List<Flight> GetAll()
+        public static List<FlightDTO> GetAll()
         {
-            var flightsList = new List<Flight>();
+            var flightsList = new List<FlightDTO>();
             var _fileReader = new StreamReader(FlightsFilePath);
 
             while (!_fileReader.EndOfStream)
@@ -92,7 +92,7 @@ namespace AirportTicketBooking.CSVFiles
                 // Flights CSV file format: ID, Airplane capacity, Price,
                 // Departure country, Departure date, Departure airport,
                 // Destination country, Arrival airport, Class
-                flightsList.Add(new Flight(int.Parse(flightData[0]), 
+                flightsList.Add(new FlightDTO(int.Parse(flightData[0]), 
                     int.Parse(flightData[1]), int.Parse(flightData[2]),
                     flightData[3], DateTime.Parse(flightData[4]), flightData[5],
                     flightData[6], flightData[7], 
@@ -103,7 +103,7 @@ namespace AirportTicketBooking.CSVFiles
             return flightsList;
         }
 
-        public static Flight Get(int flightID)
+        public static FlightDTO Get(int flightID)
         {
             if (!Exists(flightID))
                 throw new Exception($"The flight of ID: {flightID} doesn't exist.");
@@ -111,7 +111,7 @@ namespace AirportTicketBooking.CSVFiles
             return GetAll().Single(flight => flight.ID == flightID);
         }
 
-        public static List<Flight> GetAllAvailable()
+        public static List<FlightDTO> GetAllAvailable()
         {
             if (!HasData)
                 throw new Exception("There are no flights.");

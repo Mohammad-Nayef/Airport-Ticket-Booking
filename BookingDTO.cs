@@ -2,22 +2,22 @@
 
 namespace AirportTicketBooking
 {
-    public class Booking
+    public class BookingDTO
     {
         public static int NextUniqueID { get; private set; } = 1;
 
         public int ID { get; private set; }
 
-        public Passenger Passenger { get; private set; }
+        public PassengerDTO Passenger { get; private set; }
 
-        public Flight Flight { get; private set; }
+        public FlightDTO Flight { get; private set; }
 
         public DateTime BookingDate { get; set; }
 
         /// <summary>
         /// Creates and stores the booking in bookings file.
         /// </summary>
-        public Booking(Passenger passenger, Flight flight)
+        public BookingDTO(PassengerDTO passenger, FlightDTO flight)
         {
             Passenger = passenger;
             Flight = flight;
@@ -33,7 +33,7 @@ namespace AirportTicketBooking
             NextUniqueID++;
         }
 
-        public Booking(int id, Passenger passenger, Flight flight, DateTime bookingDate)
+        public BookingDTO(int id, PassengerDTO passenger, FlightDTO flight, DateTime bookingDate)
         {
             ID = id;
             Passenger = passenger;

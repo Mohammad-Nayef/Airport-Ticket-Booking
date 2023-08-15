@@ -2,7 +2,7 @@
 
 namespace AirportTicketBooking
 {
-    public class Passenger
+    public class PassengerDTO
     {
         public static int NextUniqueID { get; private set; } = 1;
 
@@ -13,7 +13,7 @@ namespace AirportTicketBooking
         /// <summary>
         /// Creates and stores the passenger in passengers file.
         /// </summary>
-        public Passenger(string name)
+        public PassengerDTO(string name)
         {
             Name = name;
             if (PassengersFile.HasData)
@@ -26,7 +26,7 @@ namespace AirportTicketBooking
             NextUniqueID++;
         }
 
-        public Passenger(int id, string name)
+        public PassengerDTO(int id, string name)
         {
             ID = id;
             Name = name;

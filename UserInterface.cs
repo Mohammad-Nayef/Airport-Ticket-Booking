@@ -6,9 +6,9 @@ namespace AirportTicketBooking
     public class UI
     {
         private static char? _option;
-        private static Passenger passenger;
-        private static List<Flight> availableFlights = new();
-        private static List<Booking> passengerBookings = new();
+        private static PassengerDTO passenger;
+        private static List<FlightDTO> availableFlights = new();
+        private static List<BookingDTO> passengerBookings = new();
 
         public static void Main()
         {
@@ -28,7 +28,7 @@ namespace AirportTicketBooking
                         string passengerName;
                         Console.Write("Please write your full name: ");
                         passengerName = Console.ReadLine();
-                        passenger = new Passenger(passengerName);
+                        passenger = new PassengerDTO(passengerName);
 
                         PassengerMenu();
                         break;
@@ -228,7 +228,7 @@ namespace AirportTicketBooking
                     case '2':
                         Console.Clear();
                         Console.WriteLine("Flights CSV file constraints:\n");
-                        Console.WriteLine(Flight.GetConstraints());
+                        Console.WriteLine(FlightDTO.GetConstraints());
                         break;
 
                     case '3':
@@ -278,7 +278,7 @@ namespace AirportTicketBooking
             var departureDate = new DateTime();
             var flightClass = new FlightClass();
             var chosen = new Dictionary<short, bool>();
-            var bookings = new List<Booking>();
+            var bookings = new List<BookingDTO>();
 
             try
             {
@@ -514,7 +514,7 @@ namespace AirportTicketBooking
             }
         }
 
-        public static void FilterByPassengerMenu(ref List<Booking>? bookings,
+        public static void FilterByPassengerMenu(ref List<BookingDTO>? bookings,
             ref StringBuilder menu, ref Dictionary<short, bool> chosen, ref int passengerID)
         {
             var passengers = PassengersFile.GetAll();
@@ -555,7 +555,7 @@ namespace AirportTicketBooking
             }
         }
 
-        public static void FilterByFlightMenu(ref List<Booking>? bookings,
+        public static void FilterByFlightMenu(ref List<BookingDTO>? bookings,
             ref StringBuilder menu, ref Dictionary<short, bool> chosen, ref int flightID)
         {
             var flights = FlightsFile.GetAll();
@@ -651,7 +651,7 @@ namespace AirportTicketBooking
             else
             {
                 var neededFlight = availableFlights.Single(flight => flight.ID == ID);
-                var _ = new Booking(passenger, neededFlight);
+                var _ = new BookingDTO(passenger, neededFlight);
 
                 Console.WriteLine($"The flight with ID ({ID}) is booked successfully!");
             }

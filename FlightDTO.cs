@@ -6,7 +6,7 @@ using AirportTicketBooking.CSVFiles;
 
 namespace AirportTicketBooking
 {
-    public class Flight
+    public class FlightDTO
     {
         public static int NextUniqueID { get; private set; } = 1;
 
@@ -51,7 +51,7 @@ namespace AirportTicketBooking
         /// <summary>
         /// Creates and stores the flight in flights file.
         /// </summary>
-        public Flight(int airplaneCapacity, decimal price, string? departureCountry,
+        public FlightDTO(int airplaneCapacity, decimal price, string? departureCountry,
             DateTime departureDate, string? departureAirport, string? destinationCountry,
             string? arrivalAirport, FlightClass @class)
         {
@@ -69,7 +69,7 @@ namespace AirportTicketBooking
             NextUniqueID++;
         }
 
-        public Flight(int id, int airplaneCapacity, decimal price, string? departureCountry,
+        public FlightDTO(int id, int airplaneCapacity, decimal price, string? departureCountry,
                       DateTime departureDate, string? departureAirport,
                       string? destinationCountry, string? arrivalAirport, FlightClass @class)
         {
@@ -84,7 +84,7 @@ namespace AirportTicketBooking
             Class = @class;
         }
 
-        public static bool IsValid(Flight flight)
+        public static bool IsValid(FlightDTO flight)
         {
             var properties = flight.GetType().GetProperties();
 
@@ -115,7 +115,7 @@ namespace AirportTicketBooking
                 "Airplane capacity, Price, Departure country, Departure date (MM-DD-YYYY), " +
                 "Departure airport, Destination country, Arrival airport, Case sensitive " +
                 "class (Economy, Business, First)\n\n");
-            var properties = typeof(Flight).GetProperties();
+            var properties = typeof(FlightDTO).GetProperties();
 
             foreach (var property in properties)
             {

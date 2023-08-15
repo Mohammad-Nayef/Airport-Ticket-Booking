@@ -14,7 +14,7 @@ namespace AirportTicketBooking.CSVFiles
             }
         }
 
-        public static void Append(Passenger newPassenger)
+        public static void Append(PassengerDTO newPassenger)
         {
             if (Exists(newPassenger.ID))
             {
@@ -24,9 +24,9 @@ namespace AirportTicketBooking.CSVFiles
             File.AppendAllText(PassengersFilePath, $"{newPassenger.ID}, {newPassenger.Name}\n");
         }
 
-        public static List<Passenger> GetAll()
+        public static List<PassengerDTO> GetAll()
         {
-            var passengersList = new List<Passenger>();
+            var passengersList = new List<PassengerDTO>();
             var _fileReader = new StreamReader(PassengersFilePath);
 
             while (!_fileReader.EndOfStream)
@@ -34,7 +34,7 @@ namespace AirportTicketBooking.CSVFiles
                 var passengerData = _fileReader.ReadLine()?.Split(", ");
 
                 // Passengers CSV file format: ID, Name
-                passengersList.Add(new Passenger(int.Parse(passengerData[0]),
+                passengersList.Add(new PassengerDTO(int.Parse(passengerData[0]),
                                                  passengerData[1]));
             }
 
@@ -42,7 +42,7 @@ namespace AirportTicketBooking.CSVFiles
             return passengersList;
         }
 
-        public static Passenger Get(int passengerID)
+        public static PassengerDTO Get(int passengerID)
         {
             if (!Exists(passengerID))
             {

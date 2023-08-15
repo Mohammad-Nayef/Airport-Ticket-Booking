@@ -13,7 +13,7 @@
             }
         }
 
-        public static void Append(Booking newBooking)
+        public static void Append(BookingDTO newBooking)
         {
             if (Exists(newBooking.ID))
             {
@@ -25,7 +25,7 @@
                                    $"{newBooking.BookingDate.Day}-{newBooking.BookingDate.Year}\n");
         }
 
-        public static void Overwrite(List<Booking> newBookings)
+        public static void Overwrite(List<BookingDTO> newBookings)
         {
             if (HasData) 
                 File.Delete(BookingsFilePath);
@@ -33,14 +33,14 @@
             newBookings.ForEach(booking => Append(booking));
         }
 
-        public static List<Booking> GetAll()
+        public static List<BookingDTO> GetAll()
         {
             if (!HasData)
             {
                 throw new Exception("There are no bookings.");
             }
 
-            var bookingsList = new List<Booking>();
+            var bookingsList = new List<BookingDTO>();
             var _fileReader = new StreamReader(BookingsFilePath);
 
             while (!_fileReader.EndOfStream)
@@ -50,7 +50,7 @@
                 int flightID = int.Parse(bookingData[2]);
 
                 // Bookings CSV file format: ID, Passenger ID, Flight ID, Booking date
-                bookingsList.Add(new Booking(int.Parse(bookingData[0]), 
+                bookingsList.Add(new BookingDTO(int.Parse(bookingData[0]), 
                     PassengersFile.Get(passengerID), FlightsFile.Get(flightID),
                     DateTime.Parse(bookingData[3])));
             }
@@ -59,7 +59,7 @@
             return bookingsList;
         }
 
-        public static List<Booking> GetBookingsOf(int passengerID)
+        public static List<BookingDTO> GetBookingsOf(int passengerID)
         {
             if (!HasData)
                 throw new Exception("There are no bookings.");
