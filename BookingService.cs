@@ -1,97 +1,145 @@
 ﻿using AirportTicketBooking.Models;
+using AirportTicketBooking.Repository;
 
 namespace AirportTicketBooking.CSVFiles
 {
     public static class BookingService
     {
-        private const string BookingsFilePath = "Bookings.csv";
+        public static List<BookingDTO> GetAll() => BookingsRepository.Bookings;
 
-        public static bool HasData
+        public static BookingDTO GetById(int bookingId)
         {
-            get
+            if (!Exists(bookingId))
             {
-                var fileInfo = new FileInfo(BookingsFilePath);
-                return fileInfo.Exists && fileInfo.Length > 0;
+                throw new Exception($"The booking of ID {bookingId} doesn't exist.");
             }
+
+            return GetAll().Single(booking => booking.Id == bookingId);
         }
 
-        public static void Append(BookingDTO newBooking)
+        public static void Add(BookingDTO newBooking)
         {
             if (Exists(newBooking.Id))
             {
-                throw new Exception("This booking already exists.");
+                throw new Exception($"The booking of ID {newBooking.Id} already exists.");
             }
 
-            File.AppendAllText(BookingsFilePath, $"{newBooking.Id}, {newBooking.PassengerId}," +
-                                   $" {newBooking.FlightId}, {newBooking.BookingDate.Month}-" +
-                                   $"{newBooking.BookingDate.Day}-{newBooking.BookingDate.Year}\n");
+            BookingsRepository.Add(newBooking);
         }
 
-        public static void Overwrite(List<BookingDTO> newBookings)
-        {
-            if (HasData) 
-                File.Delete(BookingsFilePath);
-
-            newBookings.ForEach(booking => Append(booking));
-        }
-
-        public static List<BookingDTO> GetAll()
-        {
-            if (!HasData)
-            {
-                throw new Exception("There are no bookings.");
-            }
-
-            var bookingsList = new List<BookingDTO>();
-            var _fileReader = new StreamReader(BookingsFilePath);
-
-            while (!_fileReader.EndOfStream)
-            {
-                var bookingData = _fileReader.ReadLine()?.Split(", ");
-                int passengerId = int.Parse(bookingData[1]);
-                int flightId = int.Parse(bookingData[2]);
-
-                // Bookings CSV file format: ID, Passenger ID, Flight ID, Booking date
-                bookingsList.Add(new BookingDTO(int.Parse(bookingData[0]), 
-                    PassengerService.Get(passengerId), FlightService.Get(flightId),
-                    DateTime.Parse(bookingData[3])));
-            }
-
-            _fileReader.Close();
-            return bookingsList;
-        }
+        public static void RemoveAll() => BookingsRepository.Delete();
 
         public static List<BookingDTO> GetBookingsOf(int passengerId)
         {
-            if (!HasData)
-                throw new Exception("There are no bookings.");
             return GetAll().Where(booking => booking.PassengerId == passengerId)
                             .ToList();
         }
 
-        public static void Remove(int bookingId)
+        public static void RemoveById(int bookingId)
         {
             if (!Exists(bookingId))
             {
-                throw new Exception("This bookings doesn't exist.");
+                throw new Exception($"The booking of ID {bookingId} doesn't exist.");
             }
 
             var modifiedBookings = GetAll().Where(booking => booking.Id != bookingId).ToList();
-            Overwrite(modifiedBookings);
+            BookingsRepository.Overwrite(modifiedBookings);
         }
 
-        public static void RemoveAll()
+        public static List<BookingDTO> FilterByPrice(List<BookingDTO> bookings, decimal price)
         {
-            if (HasData)
-                File.Delete(BookingsFilePath);
+            return bookings.Where(booking =>
+            {
+                var flight = FlightService.GetById(booking.FlightId);
+                return flight.Price == price;
+            }).ToList();
+        }
+
+        public static List<BookingDTO> FilterByDepartureCountry(List<BookingDTO> bookings,
+            string departureCountry)
+        {
+            return bookings.Where(booking =>
+            {
+                var flight = FlightService.GetById(booking.FlightId);
+                return flight.DepartureCountry == departureCountry;
+            }).ToList();
+        }
+
+        public static List<BookingDTO> FilterByDestinationCountry(List<BookingDTO> bookings,
+            string destinationCountry)
+        {
+            return bookings.Where(booking =>
+            {
+                var flight = FlightService.GetById(booking.FlightId);
+                return flight.DestinationCountry == destinationCountry;
+            }).ToList();
+        }
+
+        public static List<BookingDTO> FilterByDepartureDate(List<BookingDTO> bookings,
+            DateTime departureDate)
+        {
+            return bookings.Where(booking =>
+            {
+                var flight = FlightService.GetById(booking.FlightId);
+                return flight.DepartureDate == departureDate;
+            }).ToList();
+        }
+
+        public static List<BookingDTO> FilterByDepartureAirport(List<BookingDTO> bookings,
+            string departureAirport)
+        {
+            return bookings.Where(booking =>
+            {
+                var flight = FlightService.GetById(booking.FlightId);
+                return flight.DepartureAirport == departureAirport;
+            }).ToList();
+        }
+
+        public static List<BookingDTO> FilterByArrivalAirport(List<BookingDTO> bookings,
+            string arrivalAirport)
+        {
+            return bookings.Where(booking =>
+            {
+                var flight = FlightService.GetById(booking.FlightId);
+                return flight.ArrivalAirport == arrivalAirport;
+            }).ToList();
+        }
+
+        public static List<BookingDTO> FilterByFlightClass(List<BookingDTO> bookings,
+            FlightClass flightClass)
+        {
+            return bookings.Where(booking =>
+            {
+                var flight = FlightService.GetById(booking.FlightId);
+                return flight.Class == flightClass;
+            }).ToList();
+        }
+
+        public static List<BookingDTO> FilterByFlightId(List<BookingDTO> bookings,
+            int flightId)
+        {
+            return bookings.Where(booking =>
+            {
+                var flight = FlightService.GetById(booking.FlightId);
+                return flight.Id == flightId;
+            }).ToList();
+        }
+
+        public static List<BookingDTO> FilterByPassengerId(List<BookingDTO> bookings,
+            int passengerId)
+        {
+            return bookings.Where(booking =>
+            {
+                var passenger = PassengerService.GetById(booking.PassengerId);
+                return passenger.Id == passengerId;
+            }).ToList();
         }
 
         public static bool Exists(int bookingId)
         {
-            if (HasData)
-                return GetAll().Any(booking => booking.Id == bookingId);
-
-            return false;
+            return GetAll().Any(booking => booking.Id == bookingId);
         }
+
+        public static bool IsEmpty() => !GetAll().Any();
     }
 }

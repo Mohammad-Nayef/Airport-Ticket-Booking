@@ -1,69 +1,39 @@
 ﻿using AirportTicketBooking.Models;
+using AirportTicketBooking.Repository;
 
 namespace AirportTicketBooking.CSVFiles
 {
     public static class PassengerService
     {
-        private const string PassengersFilePath = "Passengers.csv";
+        public static List<PassengerDTO> GetAll() => PassengersRepository.Passengers;
 
-        public static bool HasData
-        {
-            get
-            {
-                return File.Exists(PassengersFilePath);
-            }
-        }
-
-        public static void Append(PassengerDTO newPassenger)
-        {
-            if (Exists(newPassenger.Id))
-            {
-                throw new Exception("This passenger already exists.");
-            }
-
-            File.AppendAllText(PassengersFilePath, $"{newPassenger.Id}, {newPassenger.Name}\n");
-        }
-
-        public static List<PassengerDTO> GetAll()
-        {
-            var passengersList = new List<PassengerDTO>();
-            var _fileReader = new StreamReader(PassengersFilePath);
-
-            while (!_fileReader.EndOfStream)
-            {
-                var passengerData = _fileReader.ReadLine()?.Split(", ");
-
-                // Passengers CSV file format: ID, Name
-                passengersList.Add(new PassengerDTO(int.Parse(passengerData[0]),
-                                                 passengerData[1]));
-            }
-
-            _fileReader.Close();
-            return passengersList;
-        }
-
-        public static PassengerDTO Get(int passengerId)
+        public static PassengerDTO GetById(int passengerId)
         {
             if (!Exists(passengerId))
             {
-                throw new Exception($"The passenger of ID: {passengerId} doesn't exist.");
+                throw new Exception($"The passenger of ID {passengerId} doesn't exist.");
             }
 
             return GetAll().Single(passenger => passenger.Id == passengerId);
         }
 
-        public static void RemoveAll()
+        public static void Add(PassengerDTO newPassenger)
         {
-            if (HasData)
-                File.Delete(PassengersFilePath);
+            if (Exists(newPassenger.Id))
+            {
+                throw new Exception($"The passenger {newPassenger.Name} already exists.");
+            }
+
+            PassengersRepository.Add(newPassenger);
         }
+
+        public static void RemoveAll() => PassengersRepository.Delete();
 
         public static bool Exists(int passengerId)
         {
-            if (HasData)
-                return GetAll().Any(passenger => passenger.Id == passengerId);
-
-            return false;
+            return GetAll().Any(passenger => passenger.Id == passengerId);
         }
+
+        public static bool IsEmpty() => !GetAll().Any();
     }
 }

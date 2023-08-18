@@ -4,7 +4,21 @@ namespace AirportTicketBooking.Models
 {
     public class PassengerDTO
     {
-        private static int NextUniqueId { get; set; } = 1;
+        private static int _nextUniqueId = 1;
+        private static int NextUniqueId 
+        { 
+            get
+            {
+                if (!PassengerService.IsEmpty())
+                    return _nextUniqueId = PassengerService.GetAll().Last().Id + 1;
+
+                return _nextUniqueId;
+            }
+            set
+            {
+                _nextUniqueId = value;
+            } 
+        }
 
         public int Id { get; private set; }
 
@@ -16,13 +30,8 @@ namespace AirportTicketBooking.Models
         public PassengerDTO(string name)
         {
             Name = name;
-            if (PassengerService.HasData)
-            {
-                NextUniqueId = PassengerService.GetAll().Last().Id + 1;
-            }
-
             Id = NextUniqueId;
-            PassengerService.Append(this);
+            PassengerService.Add(this);
             NextUniqueId++;
         }
 

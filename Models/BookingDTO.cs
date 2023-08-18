@@ -4,7 +4,21 @@ namespace AirportTicketBooking.Models
 {
     public class BookingDTO
     {
-        private static int NextUniqueId { get; set; } = 1;
+        private static int _nextUniqueId = 1;
+        private static int NextUniqueId
+        {
+            get
+            {
+                if (!BookingService.IsEmpty())
+                    return _nextUniqueId = BookingService.GetAll().Last().Id + 1;
+
+                return _nextUniqueId;
+            }
+            set
+            {
+                _nextUniqueId = value;
+            }
+        }
 
         public int Id { get; private set; }
 
@@ -23,25 +37,24 @@ namespace AirportTicketBooking.Models
             FlightId = flight.Id;
             BookingDate = DateTime.Now.Date;
 
-            if (BookingService.HasData)
-            {
+            if (!BookingService.IsEmpty())
                 NextUniqueId = BookingService.GetAll().Last().Id + 1;
-            }
 
             Id = NextUniqueId;
-            BookingService.Append(this);
+            BookingService.Add(this);
             NextUniqueId++;
         }
 
-        public BookingDTO(int id, PassengerDTO passenger, FlightDTO flight, DateTime bookingDate)
+        public BookingDTO(int id, int passengerId, int flightId, DateTime bookingDate)
         {
             Id = id;
-            PassengerId = passenger.Id;
-            FlightId = flight.Id;
+            PassengerId = passengerId;
+            FlightId = flightId;
             BookingDate = bookingDate;
         }
 
         public override string ToString() => $"Booking -> ID: {Id}, Date: {BookingDate.Month}-" +
-                $"{BookingDate.Day}-{BookingDate.Year}, Passenger and flight:\n{PassengerId}\n{FlightId}";
+                $"{BookingDate.Day}-{BookingDate.Year}, Passenger and flight:\n" +
+            $"{PassengerService.GetById(PassengerId)}\n{FlightService.GetById(FlightId)}";
     }
 }

@@ -1,148 +1,108 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
 using AirportTicketBooking.Models;
+using AirportTicketBooking.Repository;
 
 namespace AirportTicketBooking.CSVFiles
 {
     public static class FlightService
     {
-        private const string FlightsFilePath = "Flights.csv";
+        public static List<FlightDTO> GetAll() => FlightsRepository.Flights;
 
-        public static bool HasData
-        {
-            get
-            {
-                var fileInfo = new FileInfo(FlightsFilePath);
-                return fileInfo.Exists && fileInfo.Length > 0;  
-            }
-        }
-
-        public static void Append(FlightDTO newFlight)
-        {
-            if (Exists(newFlight.Id))
-                throw new Exception("This flight already exists.");
-
-            File.AppendAllText(FlightsFilePath, $"{newFlight.Id}, " +
-                $"{newFlight.AirplaneCapacity}, {newFlight.Price}, " +
-                $"{newFlight.DepartureCountry}, {newFlight.DepartureDate.Month}-" +
-                $"{newFlight.DepartureDate.Day}-{newFlight.DepartureDate.Year}, " +
-                $"{newFlight.DepartureAirport}, {newFlight.DestinationCountry}, " +
-                $"{newFlight.ArrivalAirport}, {newFlight.Class}\n");
-        }
-
-        public static void ImportCSVFile(string newFlightsFilePath)
-        {
-            try
-            {
-                RemoveAll();
-                IsValid(newFlightsFilePath);
-            }
-            catch (Exception ex) 
-            {
-                throw ex;
-            }
-        }
-
-        public static bool IsValid(string newFilePath)
-        {
-            var _fileReader = new StreamReader(newFilePath);
-            bool errorFound = false;
-            var errorLines = new StringBuilder($"Found errors at these lines in " +
-                $"{Path.GetFileName(newFilePath)}:\n");
-
-            for (var line = 1; !_fileReader.EndOfStream; line++)
-            {
-                var newLine = _fileReader.ReadLine();
-                if (String.IsNullOrEmpty(newLine))
-                    continue;
-
-                var newFlight = newLine.Split(", ");
-
-                if (!int.TryParse(newFlight[0], out var airplaneCapacity) ||
-                    !decimal.TryParse(newFlight[1], out var price) ||
-                    !DateTime.TryParse(newFlight[3], out DateTime departureDate) ||
-                    !Enum.TryParse(typeof(FlightClass), newFlight[7], out var flightClass) ||
-                    !FlightDTO.IsValid(new FlightDTO(airplaneCapacity, price, newFlight[2],
-                    departureDate, newFlight[4], newFlight[5], newFlight[6],
-                    (FlightClass)flightClass)))
-                {
-                    errorFound = true;
-                    errorLines.Append($"{line}, "); 
-                }
-            }
-
-            if (errorFound)
-            {
-                RemoveAll();
-                throw new Exception(errorLines.ToString() +
-                    "\nMake sure that you follow the constraints.");
-            }
-
-            _fileReader.Close();
-            return true;
-        }
-
-        public static List<FlightDTO> GetAll()
-        {
-            var flightsList = new List<FlightDTO>();
-            var _fileReader = new StreamReader(FlightsFilePath);
-
-            while (!_fileReader.EndOfStream)
-            {
-                var flightData = _fileReader.ReadLine()?.Split(", ");
-
-                // Flights CSV file format: ID, Airplane capacity, Price,
-                // Departure country, Departure date, Departure airport,
-                // Destination country, Arrival airport, Class
-                flightsList.Add(new FlightDTO(int.Parse(flightData[0]), 
-                    int.Parse(flightData[1]), int.Parse(flightData[2]),
-                    flightData[3], DateTime.Parse(flightData[4]), flightData[5],
-                    flightData[6], flightData[7], 
-                    (FlightClass)Enum.Parse(typeof(FlightClass), flightData[8])));
-            }
-
-            _fileReader.Close ();
-            return flightsList;
-        }
-
-        public static FlightDTO Get(int flightID)
+        public static FlightDTO GetById(int flightID)
         {
             if (!Exists(flightID))
-                throw new Exception($"The flight of ID: {flightID} doesn't exist.");
+            {
+                throw new Exception($"The flight of ID {flightID} doesn't exist.");
+            }
 
             return GetAll().Single(flight => flight.Id == flightID);
         }
 
-        public static List<FlightDTO> GetAllAvailable()
+        public static void Add(FlightDTO newFlight) => FlightsRepository.Add(newFlight);
+
+        public static void RemoveAll() => FlightsRepository.Delete();
+
+        public static void ImportCSVFile(string flightsFilePath)
         {
-            if (!HasData)
-                throw new Exception("There are no flights.");
-
-            return GetAll().Where(flight =>
-                {
-                    if (BookingService.HasData)
-                    {
-                        var numberOfPassengers = BookingService.GetAll()
-                            .Where(booking => booking.FlightId.ID == flight.Id)
-                            .Count();
-
-                        return numberOfPassengers < flight.AirplaneCapacity;
-                    }
-                    else return true;
-                }).ToList();
+            FlightsRepository.LoadFromFile(flightsFilePath);
         }
 
-        public static void RemoveAll()
+        public static List<FlightDTO> GetAllAvailable()
         {
-            if (HasData)
-                File.Delete(FlightsFilePath);
+            return GetAll().Where(flight => IsAvailableForBooking(flight))
+                .ToList();
+        }
+
+        public static bool IsAvailableForBooking(FlightDTO flight)
+        {
+            if (!BookingService.IsEmpty())
+            {
+                var numberOfPassengers = BookingService.GetAll()
+                    .Where(booking => booking.FlightId == flight.Id)
+                    .Count();
+
+                return numberOfPassengers < flight.AirplaneCapacity;
+            }
+            else return true;
         }
 
         public static bool Exists(int flightID)
         {
-            if (HasData)
-                return GetAll().Any(flight => flight.Id == flightID);
+            if (IsEmpty())
+                return false;
 
-            return false;
+            return GetAll().Any(flight => flight.Id == flightID);
         }
+
+        public static List<FlightDTO> FilterByPrice(List<FlightDTO> filteredAvailableFlights,
+            decimal price)
+        {
+            return filteredAvailableFlights.Where(flight => flight.Price == price).ToList();
+        }
+
+        public static List<FlightDTO> FilterByDepartureCountry(List<FlightDTO> filteredAvailableFlights,
+            string? departureCountry)
+        {
+            return filteredAvailableFlights.Where(flight => 
+                flight.DepartureCountry == departureCountry).ToList();
+        }
+
+        public static List<FlightDTO> FilterByDestinationCountry(List<FlightDTO> filteredAvailableFlights,
+            string? destinationCountry)
+        {
+            return filteredAvailableFlights.Where(flight =>
+                flight.DestinationCountry == destinationCountry).ToList();
+        }
+
+        public static List<FlightDTO> FilterByDepartureDate(List<FlightDTO> filteredAvailableFlights,
+            DateTime departureDate)
+        {
+            return filteredAvailableFlights.Where(flight =>
+                flight.DepartureDate == departureDate).ToList();
+        }
+
+        public static List<FlightDTO> FilterByDepartureAirport(List<FlightDTO> filteredAvailableFlights,
+            string? departureAirport)
+        {
+            return filteredAvailableFlights.Where(flight =>
+                flight.DepartureAirport == departureAirport).ToList();
+        }
+
+        public static List<FlightDTO> FilterByArrivalAirport(List<FlightDTO> filteredAvailableFlights,
+            string? arrivalAirport)
+        {
+            return filteredAvailableFlights.Where(flight =>
+                flight.ArrivalAirport == arrivalAirport).ToList();
+        }
+
+        public static List<FlightDTO> FilterByClass(List<FlightDTO> filteredAvailableFlights,
+            FlightClass flightClass)
+        {
+            return filteredAvailableFlights.Where(flight =>
+                flight.Class == flightClass).ToList();
+        }
+
+        public static bool IsEmpty() => !GetAll().Any();
+
     }
 }
