@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using AirportTicketBooking.Models;
+﻿using AirportTicketBooking.Models;
 using AirportTicketBooking.Repository;
 
 namespace AirportTicketBooking.CSVFiles

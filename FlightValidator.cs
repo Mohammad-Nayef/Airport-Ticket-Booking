@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text;
 using AirportTicketBooking.Models;
-using AirportTicketBooking.Repository;
 
 namespace AirportTicketBooking
 {
