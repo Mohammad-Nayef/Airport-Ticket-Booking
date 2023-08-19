@@ -31,16 +31,17 @@ namespace AirportTicketBooking.Repository
                     $"Make sure that you follow the constraints.");
             }
 
-            var _fileReader = new StreamReader(flightsFilePath);
+            var fileReader = new StreamReader(flightsFilePath);
             var flights = new List<FlightDTO>();
 
-            while (!_fileReader.EndOfStream)
+            while (!fileReader.EndOfStream)
             {
-                int index = 0;
+                var index = 0;
+
                 if (hasId)
                     index = 1;
 
-                var flightData = _fileReader.ReadLine()?.Split(", ");
+                var flightData = fileReader.ReadLine()?.Split(", ");
                 var airplaneCapacity = int.Parse(flightData[index++]);
                 var price = decimal.Parse(flightData[index++]);
                 var departureCountry = flightData[index++];
@@ -64,7 +65,7 @@ namespace AirportTicketBooking.Repository
                 }
             }
 
-            _fileReader.Close();
+            fileReader.Close();
             return flights;
         }
 

@@ -46,9 +46,9 @@ namespace AirportTicketBooking.Models
         [Required]
         public FlightClass Class { get; set; }
 
-        public FlightDTO(int airplaneCapacity, decimal price, string? departureCountry,
+        private FlightDTO(int airplaneCapacity, decimal price, string? departureCountry,
             DateTime departureDate, string? departureAirport, string? destinationCountry,
-            string? arrivalAirport, FlightClass @class, bool validation = false)
+            string? arrivalAirport, FlightClass @class)
         {
             AirplaneCapacity = airplaneCapacity;
             Price = price;
@@ -58,7 +58,14 @@ namespace AirportTicketBooking.Models
             DestinationCountry = destinationCountry;
             ArrivalAirport = arrivalAirport;
             Class = @class;
+        }
 
+        public FlightDTO(int airplaneCapacity, decimal price, string? departureCountry,
+            DateTime departureDate, string? departureAirport, string? destinationCountry,
+            string? arrivalAirport, FlightClass @class, bool validation = false) : this (airplaneCapacity,  price, departureCountry,
+                departureDate, departureAirport, destinationCountry,
+                arrivalAirport, @class)
+        {
             if (!validation)
             {
                 Id = NextUniqueId;
@@ -74,18 +81,12 @@ namespace AirportTicketBooking.Models
         }
 
         public FlightDTO(int id, int airplaneCapacity, decimal price, string? departureCountry,
-                      DateTime departureDate, string? departureAirport,
-                      string? destinationCountry, string? arrivalAirport, FlightClass @class)
+            DateTime departureDate, string? departureAirport,
+            string? destinationCountry, string? arrivalAirport, FlightClass @class) : this(airplaneCapacity, price, departureCountry,
+                departureDate, departureAirport, destinationCountry,
+                arrivalAirport, @class)
         {
             Id = id;
-            AirplaneCapacity = airplaneCapacity;
-            Price = price;
-            DepartureCountry = departureCountry;
-            DepartureDate = departureDate;
-            DepartureAirport = departureAirport;
-            DestinationCountry = destinationCountry;
-            ArrivalAirport = arrivalAirport;
-            Class = @class;
         }
 
         public override string ToString() => $"Flight -> ID: {Id}, Airplane capacity: " +

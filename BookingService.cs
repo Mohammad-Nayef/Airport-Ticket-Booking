@@ -31,8 +31,9 @@ namespace AirportTicketBooking.CSVFiles
 
         public static List<BookingDTO> GetBookingsOf(int passengerId)
         {
-            return GetAll().Where(booking => booking.PassengerId == passengerId)
-                            .ToList();
+            return GetAll()
+                .Where(booking => booking.PassengerId == passengerId)
+                .ToList();
         }
 
         public static void RemoveById(int bookingId)
@@ -42,97 +43,91 @@ namespace AirportTicketBooking.CSVFiles
                 throw new Exception($"The booking of ID {bookingId} doesn't exist.");
             }
 
-            var modifiedBookings = GetAll().Where(booking => booking.Id != bookingId).ToList();
+            var modifiedBookings = GetAll()
+                .Where(booking => booking.Id != bookingId)
+                .ToList();
             BookingsRepository.Overwrite(modifiedBookings);
         }
 
         public static List<BookingDTO> FilterByPrice(List<BookingDTO> bookings, decimal price)
         {
-            return bookings.Where(booking =>
-            {
-                var flight = FlightService.GetById(booking.FlightId);
-                return flight.Price == price;
-            }).ToList();
+            return bookings.Where(booking => 
+                            FlightService.GetById(booking.FlightId).Price == price)
+                            .ToList();
         }
 
         public static List<BookingDTO> FilterByDepartureCountry(List<BookingDTO> bookings,
             string departureCountry)
         {
-            return bookings.Where(booking =>
-            {
-                var flight = FlightService.GetById(booking.FlightId);
-                return flight.DepartureCountry == departureCountry;
-            }).ToList();
+            return bookings.Where(booking => 
+                            FlightService.GetById(booking.FlightId).DepartureCountry
+                                .Equals(departureCountry, StringComparison.InvariantCultureIgnoreCase))
+                            .ToList();
         }
 
         public static List<BookingDTO> FilterByDestinationCountry(List<BookingDTO> bookings,
             string destinationCountry)
         {
             return bookings.Where(booking =>
-            {
-                var flight = FlightService.GetById(booking.FlightId);
-                return flight.DestinationCountry == destinationCountry;
-            }).ToList();
+                            FlightService.GetById(booking.FlightId).DestinationCountry
+                                .Equals(destinationCountry, StringComparison.InvariantCultureIgnoreCase))
+                            .ToList();
         }
 
         public static List<BookingDTO> FilterByDepartureDate(List<BookingDTO> bookings,
             DateTime departureDate)
         {
             return bookings.Where(booking =>
-            {
-                var flight = FlightService.GetById(booking.FlightId);
-                return flight.DepartureDate == departureDate;
-            }).ToList();
+                            FlightService.GetById(booking.FlightId).DepartureDate == departureDate)
+                            .ToList();
         }
 
         public static List<BookingDTO> FilterByDepartureAirport(List<BookingDTO> bookings,
             string departureAirport)
         {
             return bookings.Where(booking =>
-            {
-                var flight = FlightService.GetById(booking.FlightId);
-                return flight.DepartureAirport == departureAirport;
-            }).ToList();
+                            FlightService.GetById(booking.FlightId).DepartureAirport
+                                .Equals(departureAirport, StringComparison.InvariantCultureIgnoreCase))
+                            .ToList();
         }
 
         public static List<BookingDTO> FilterByArrivalAirport(List<BookingDTO> bookings,
             string arrivalAirport)
         {
             return bookings.Where(booking =>
-            {
-                var flight = FlightService.GetById(booking.FlightId);
-                return flight.ArrivalAirport == arrivalAirport;
-            }).ToList();
+                            FlightService.GetById(booking.FlightId).ArrivalAirport
+                                .Equals(arrivalAirport, StringComparison.InvariantCultureIgnoreCase))
+                            .ToList();
         }
 
         public static List<BookingDTO> FilterByFlightClass(List<BookingDTO> bookings,
             FlightClass flightClass)
         {
             return bookings.Where(booking =>
-            {
-                var flight = FlightService.GetById(booking.FlightId);
-                return flight.Class == flightClass;
-            }).ToList();
+                            FlightService.GetById(booking.FlightId).Class == flightClass)
+                            .ToList();
         }
 
         public static List<BookingDTO> FilterByFlightId(List<BookingDTO> bookings,
             int flightId)
         {
-            return bookings.Where(booking =>
-            {
-                var flight = FlightService.GetById(booking.FlightId);
-                return flight.Id == flightId;
-            }).ToList();
+            return bookings.Join(FlightService.GetAll(),
+                            booking => booking.FlightId,
+                            flight => flight.Id,
+                            (booking, flight) => booking)
+                            .Where(booking => booking.FlightId == flightId)
+                            .ToList();
         }
 
         public static List<BookingDTO> FilterByPassengerId(List<BookingDTO> bookings,
             int passengerId)
         {
-            return bookings.Where(booking =>
-            {
-                var passenger = PassengerService.GetById(booking.PassengerId);
-                return passenger.Id == passengerId;
-            }).ToList();
+            return bookings.Join(PassengerService.GetAll(),
+                            booking => booking.PassengerId,
+                            passenger => passenger.Id,
+                            (booking, passenger) => booking)
+                            .Where(booking => booking.PassengerId == passengerId)
+                            .ToList();
         }
 
         public static bool Exists(int bookingId)

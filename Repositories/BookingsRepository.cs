@@ -25,11 +25,11 @@ namespace AirportTicketBooking.Repository
         public static List<BookingDTO> LoadFromFile(string bookingsFilePath)
         {
             var bookings = new List<BookingDTO>();
-            var _fileReader = new StreamReader(bookingsFilePath);
+            var fileReader = new StreamReader(bookingsFilePath);
 
-            while (!_fileReader.EndOfStream)
+            while (!fileReader.EndOfStream)
             {
-                var bookingData = _fileReader.ReadLine()?.Split(", ");
+                var bookingData = fileReader.ReadLine()?.Split(", ");
                 var bookingId = int.Parse(bookingData[0]);
                 var passengerId = int.Parse(bookingData[1]);
                 var flightId = int.Parse(bookingData[2]);
@@ -38,7 +38,7 @@ namespace AirportTicketBooking.Repository
                     DateTime.Parse(bookingData[3])));
             }
 
-            _fileReader.Close();
+            fileReader.Close();
             return bookings;
         }
 
