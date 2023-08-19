@@ -537,7 +537,7 @@ namespace AirportTicketBooking
                 }
                 else
                 {
-                    BookingService.FilterByFlightId(filteredBookings, flightId);
+                    filteredBookings = BookingService.FilterByFlightId(filteredBookings, flightId);
                     menu.AppendLine($"Flight ID: {flightId}");
                     chosen.Add(8, true);
                     break;
